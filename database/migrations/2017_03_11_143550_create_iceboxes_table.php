@@ -15,6 +15,8 @@ class CreateIceboxesTable extends Migration
     {
         Schema::create('iceboxes', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('title');
+            $table->text('description');
             $table->timestamps();
         });
     }
