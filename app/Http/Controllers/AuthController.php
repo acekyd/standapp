@@ -10,6 +10,8 @@ use Illuminate\Mail\Message;
 use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Password;
 use Dingo\Api\Exception\ValidationHttpException;
+use Illuminate\Foundation\Application;
+
 
 use App\Http\Requests\LoginUserRequest;
 
@@ -17,9 +19,30 @@ use Carbon\Carbon;
 
 class AuthController extends ApiController
 {
+
+    const REFRESH_TOKEN = 'refreshToken';
+
+    private $apiConsumer;
+
+    private $auth;
+
+    private $cookie;
+
+    private $db;
+
+
+    public function __construct(Application $app) {
+
+        $this->apiConsumer = $app->make('apiconsumer');
+        $this->auth = $app->make('auth');
+        $this->cookie = $app->make('cookie');
+        $this->db = $app->make('db');
+        $this->request = $app->make('request');
+    }
+
     public function login(LoginUserRequest $request)
     {
-        return response()->json([$this->attemptLogin($request->email, $request->password)]);
+        return response()->json($this->attemptLogin($request->email, $request->password));
     }
 
     /**
@@ -58,14 +81,11 @@ class AuthController extends ApiController
             'grant_type'    => $grantType
         ]);
 
-        return $data;
         //using inbuilt dingo api internal api dispatcher
-        $response = $this->api->post('oauth/token', $data);
-
-        return $response;
+        $response = $this->apiConsumer->post('oauth/token', $data);
 
         if (!$response->isSuccessful()) {
-            throw new InvalidCredentialsException();
+            return $this->response->errorUnauthorized();
         }
 
         $data = json_decode($response->getContent());
