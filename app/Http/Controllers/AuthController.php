@@ -51,7 +51,7 @@ class AuthController extends ApiController
         $userData = $request->all();
 
         //Set default time a new user's day starts
-        $userData->day_starts = '09:00';
+        $userData['day_starts'] = '09:00';
 
         User::unguard();
         $user = User::create($userData);

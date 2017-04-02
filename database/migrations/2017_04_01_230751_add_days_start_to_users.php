@@ -15,7 +15,7 @@ class AddDaysStartToUsers extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
-            $table->dateTime('day_starts')->after('timezone');
+            $table->time('day_starts')->after('timezone');
         });
     }
 
