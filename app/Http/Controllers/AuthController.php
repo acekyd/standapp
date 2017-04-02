@@ -14,6 +14,7 @@ use Illuminate\Foundation\Application;
 
 
 use App\Http\Requests\LoginUserRequest;
+use App\Http\Requests\SignupUserRequest;
 
 use Carbon\Carbon;
 
@@ -43,6 +44,24 @@ class AuthController extends ApiController
     public function login(LoginUserRequest $request)
     {
         return response()->json($this->attemptLogin($request->email, $request->password));
+    }
+
+    public function signup(SignupUserRequest $request)
+    {
+        $userData = $request->all();
+
+        //Set default time a new user's day starts
+        $userData->day_starts = '09:00';
+
+        User::unguard();
+        $user = User::create($userData);
+        User::reguard();
+
+        if(!$user->id) {
+            return $this->response->errorInternal("Could not create user");
+        }
+
+       return response()->json($this->attemptLogin($request->email, $request->password));
     }
 
     /**
@@ -107,72 +126,6 @@ class AuthController extends ApiController
         ];
     }
 
-
-
-
-
-
-
-
-
-
-    public function signup(Request $request)
-    {
-        $signupFields = Config::get('boilerplate.signup_fields');
-        $hasToReleaseToken = Config::get('boilerplate.signup_token_release');
-
-        $userData = $request->only($signupFields);
-
-        $validator = Validator::make($userData, Config::get('boilerplate.signup_fields_rules'));
-
-        if($validator->fails()) {
-            throw new ValidationHttpException($validator->errors()->all());
-        }
-
-        User::unguard();
-        $user = User::create($userData);
-        User::reguard();
-
-        if(!$user->id) {
-            return $this->response->error('could_not_create_user', 500);
-        }
-
-        if($hasToReleaseToken) {
-            return $this->login($request);
-        }
-
-        return $this->response->created();
-    }
-
-    public function invite_signup(Request $request)
-    {
-        $signupFields = Config::get('boilerplate.signup_fields');
-        $hasToReleaseToken = Config::get('boilerplate.signup_token_release');
-
-        $userData = $request->only($signupFields);
-
-        $validator = Validator::make($userData, Config::get('boilerplate.signup_fields_rules'));
-
-        if($validator->fails()) {
-            throw new ValidationHttpException($validator->errors()->all());
-        }
-
-        $user = User::where('email', $request->email)->first();
-        $user->password = $request->password;
-        $user->name = $request->name;
-        $user->timezone = $request->timezone;
-        $user->save();
-
-        if(!$user->id) {
-            return $this->response->error('could_not_create_user', 500);
-        }
-
-        if($hasToReleaseToken) {
-            return $this->login($request);
-        }
-
-        return $this->response->created();
-    }
 
     public function recovery(Request $request)
     {

@@ -20,7 +20,9 @@ $api->version('v1', function ($api) {
 	//Unauthenticated routes.
 	$api->get('/users', function (Request $request) { return \App\User::all(); });
 	$api->post('/login', 'App\Http\Controllers\AuthController@login');
-	$api->post('/login/refresh', 'Api\LoginController@refresh');
+	$api->post('/login/refresh', 'App\Http\Controllers\AuthController@refresh');
+
+	$api->post('/signup', 'App\Http\Controllers\AuthController@signup');
 
 	//Routes that require authentication.
 
