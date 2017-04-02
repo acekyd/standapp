@@ -60,6 +60,7 @@ class AuthController extends ApiController
         if(!$user->id) {
             return $this->response->errorInternal("Could not create user");
         }
+        //TODO: Initialize settings here.
 
        return response()->json($this->attemptLogin($request->email, $request->password));
     }

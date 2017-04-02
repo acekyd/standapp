@@ -15,7 +15,7 @@ class AddUserIdToTasksTable extends Migration
     {
         Schema::table('tasks', function (Blueprint $table) {
             //
-            $table->time('user_id')->after('id');
+            $table->integer('user_id')->after('id');
         });
     }
 

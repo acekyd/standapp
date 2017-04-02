@@ -17,11 +17,11 @@ class CreateTasksTable extends Migration
             $table->increments('id');
             $table->string('title');
             $table->text('description');
-            $table->integer('type');
-            $table->date('deadline');
-            $table->date('end_date');
-            $table->integer('soft_delete');
-            $table->integer('status');
+            $table->integer('type')->nullable();
+            $table->date('deadline')->nullable();
+            $table->date('end_date')->nullable();
+            $table->integer('soft_delete')->default(0);
+            $table->integer('status')->default(0);
             $table->timestamps();
         });
     }

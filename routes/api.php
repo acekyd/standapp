@@ -21,7 +21,6 @@ $api->version('v1', function ($api) {
 	$api->get('/users', function (Request $request) { return \App\User::all(); });
 	$api->post('/login', 'App\Http\Controllers\AuthController@login');
 	$api->post('/login/refresh', 'App\Http\Controllers\AuthController@refresh');
-
 	$api->post('/signup', 'App\Http\Controllers\AuthController@signup');
 
 	//Routes that require authentication.
@@ -31,6 +30,9 @@ $api->version('v1', function ($api) {
         $api->get('/user', function (Request $request) {
         	return $request->user();
         });
+
+        //Task routes
+        $api->post('/task', 'App\Http\Controllers\TaskController@create');
     });
 
 });
