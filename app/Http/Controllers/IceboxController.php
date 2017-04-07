@@ -27,4 +27,13 @@ class IceboxController extends ApiController
 		Icebox::create($request->all());
 		return $this->response->created();
 	}
+
+	public function all(Request $request)
+	{
+		$currentUser = $request->user();
+
+		$icebox = Icebox::where('user_id', $currentUser->id)->get();
+
+		return response()->json($icebox);
+	}
 }

@@ -34,6 +34,10 @@ $api->version('v1', function ($api) {
         //Task routes
         $api->post('/task', 'App\Http\Controllers\TaskController@create');
         $api->get('/tasks/today', 'App\Http\Controllers\TaskController@today');
+
+        //Icebox routes
+        $api->post('/icebox', 'App\Http\Controllers\IceboxController@create');
+        $api->get('/icebox', 'App\Http\Controllers\TaskController@all');
     });
 
 });
